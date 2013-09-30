@@ -1,0 +1,121 @@
+{% extends "workout/workout_list.html" %}
+{#{% load mezzanine_tags comment_tags keyword_tags rating_tags i18n future disqus_tags %}#}
+{% load mezzanine_tags keyword_tags i18n future %}
+
+{% block meta_title %}{{ workout.meta_title }}{% endblock %}
+
+{% block meta_keywords %}{% metablock %}
+{% keywords_for workout as tags %}
+{% for tag in tags %}{% if not forloop.first %}, {% endif %}{{ tag }}{% endfor %}
+{% endmetablock %}{% endblock %}
+
+{% block meta_description %}{% metablock %}
+{{ workout.description }}
+{% endmetablock %}{% endblock %}
+
+{% block title %}
+{% editable workout.title %}{{ workout.title }}{% endeditable %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+{{ block.super }}
+<li class="active">{{ workout.title }}</li>
+{% endblock %}
+
+{% block main %}
+
+{% block workout_detail_postedby %}
+{% editable workout.publish_date %}
+<h6>
+    {% trans "Posted by" %}:
+    {% with workout.user as author %}
+    <a {#href="{% url "workout_list_author" author %}"#}>{{ author.get_full_name|default:author.username }}</a>
+    {% endwith %}
+    {% blocktrans with sometime=workout.publish_date|timesince %}{{ sometime }} ago{% endblocktrans %}
+</h6>
+{% endeditable %}
+{% endblock %}
+
+<div class="workout_details">
+    <div class="row-fluid">
+        <div class="span6">
+            <h3>Totals</h3>
+            <dl>
+                <dt>Time<dd>{{ workout.total_elapsed_time }} / {{ workout.total_timer_time }}
+                <dt>Distance<dd>{{ workout.total_distance }} km
+                <dt>Ascent<dd>{{ workout.total_ascent }} m
+                <dt>Calories<dd>{{ workout.total_calories }} cal
+            </dl>
+        </div>
+        <div class="span6">
+            <h3>Data</h3>
+            <dl>
+                <dt>Heart Rate<dd>Avg: {{ workout.avg_heart_rate }} bpm / Max: {{workout.max_heart_rate}} bpm
+                <dt>Speed<dd>Avg: {{ workout.avg_speed }} m/s / Max: {{ workout.max_speed }} m/s
+                <dt>Laps<dd>{{ workout.laps.count }} laps
+                <dt>Data points<dd>{{ workout.records.count }} points
+            </dl>
+        </div>
+    </div>
+</div>
+
+{% block workout_detail_content %}
+{% editable workout.content %}
+{{ workout.content|richtext_filter|safe }}
+{% endeditable %}
+{% endblock %}
+
+{% block workout_detail_keywords %}
+{% keywords_for workout as tags %}
+{% if tags %}
+{% spaceless %}
+<ul class="unstyled tags">
+    <li>{% trans "Tags" %}:</li>
+    {% for tag in tags %}
+    <li><a href="{% url "workout_list_tag" tag.slug %}">{{ tag }}</a></li>
+    {% endfor %}
+</ul>
+{% endspaceless %}
+{% endif %}
+{% endblock %}
+
+{% block workout_detail_sharebuttons %}
+{% set_short_url_for workout %}
+<a class="btn small primary share-twitter" target="_blank" href="http://twitter.com/home?status={{ workout.short_url|urlencode }}%20{{ workout.title|urlencode }}">{% trans "Share on Twitter" %}</a>
+<a class="btn small primary share-facebook" target="_blank" href="http://facebook.com/sharer.php?u={{ request.build_absolute_uri }}&amp;t={{ workout.title|urlencode }}">{% trans "Share on Facebook" %}</a>
+{% endblock %}
+
+{% block workout_previous_next %}
+<ul class="pager">
+{% with workout.get_previous_by_publish_date as previous %}
+{% if previous %}
+<li class="previous">
+    <a href="{{ previous.get_absolute_url }}">&larr; {{ previous }}</a>
+</li>
+{% endif %}
+{% endwith %}
+{% with workout.get_next_by_publish_date as next %}
+{% if next %}
+<li class="next">
+    <a href="{{ next.get_absolute_url }}">{{ next }} &rarr;</a>
+</li>
+{% endif %}
+{% endwith %}
+</ul>
+{% endblock %}
+
+{% block workout_detail_related_posts %}
+{% if workout.related_posts.all %}
+<div id="related-posts">
+<h3>{% trans 'Related posts' %}</h3>
+<ul class="unstyled">
+{% for post in workout.related_posts.all %}
+     <li><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></li>
+{% endfor %}
+</ul>
+</div>
+{% endif %}
+{% endblock %}
+
+
+{% endblock %}
