@@ -38,7 +38,7 @@
 
 <div class="workout_details">
     <div class="row-fluid">
-        <div class="span6">
+        <div class="span4">
             <h3>Totals</h3>
             <dl>
                 <dt>Time<dd>{{ workout.total_elapsed_time }} / {{ workout.total_timer_time }}
@@ -47,7 +47,7 @@
                 <dt>Calories<dd>{{ workout.total_calories }} cal
             </dl>
         </div>
-        <div class="span6">
+        <div class="span4">
             <h3>Data</h3>
             <dl>
                 <dt>Heart Rate<dd>Avg: {{ workout.avg_heart_rate }} bpm / Max: {{workout.max_heart_rate}} bpm
@@ -56,14 +56,88 @@
                 <dt>Data points<dd>{{ workout.records.count }} points
             </dl>
         </div>
+        <div class="span4">
+            <h3>Description</h3>
+            {% block workout_detail_content %}
+            {% editable workout.content %}
+            {{ workout.content|richtext_filter|safe }}
+            {% endeditable %}
+            {% endblock %}
+        </div>
     </div>
 </div>
 
-{% block workout_detail_content %}
-{% editable workout.content %}
-{{ workout.content|richtext_filter|safe }}
-{% endeditable %}
-{% endblock %}
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#tab-laps" data-toggle="tab">Laps</a></li>
+    <li><a href="#tab-points" data-toggle="tab">Data points</a></li>
+</ul>
+<div class="tab-content">
+    <div class="tab-pane active" id="tab-laps">
+        {#<h3>Laps</h3>#}
+        <table class="table table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Time (avg./max.) [secs]</th>
+                    <th>Distance [m]</th>
+                    <th>Speed (avg./max.) [m/s]</th>
+                    <th>Heart Rate [bpm]</th>
+                    <th>Ascent [m]</th>
+                    <th>Calories [cal]</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lap in workout.laps.all %}
+                <tr>
+                    <td>{{ lap.id }}</td>
+                    <td>{{ lap.total_timer_time }} / {{ lap.total_elapsed_time }}</td>
+                    <td>{{ lap.total_distance }}</td>
+                    <td>{{ lap.avg_speed }} / {{ lap.max_speed }}</td>
+                    <td>{{ lap.avg_heart_rate }} / {{ lap.max_heart_rate }}</td>
+                    <td>{{ lap.total_ascent }}</td>
+                    <td>{{ lap.total_calories }}</td>
+                </tr>
+                {% endfor %}
+                <tr class="success">
+                    <td>Totals</td>
+                    <td>{{ workout.total_timer_time }} / {{ workout.total_elapsed_time }}</td>
+                    <td>{{ workout.total_distance }}</td>
+                    <td>{{ workout.avg_speed }} / {{ workout.max_speed }}</td>
+                    <td>{{ workout.avg_heart_rate }} / {{ workout.max_heart_rate }}</td>
+                    <td>{{ workout.total_ascent }}</td>
+                    <td>{{ workout.total_calories }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="tab-pane" id="tab-points">
+        {#<h3>All data points</h3>#}
+        <table class="table table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Distance [km]</th>
+                    <th>Altitude [m]</th>
+                    <th>Speed [km/h]</th>
+                    <th>Heart Rate [bpm]</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in workout.records.all %}
+                <tr>
+                    <td>{{ record.timestamp|date:"H:m:s" }}</td>
+                    <td>{{ record.distance }}</td>
+                    <td>{{ record.altitude }}</td>
+                    <td>{{ record.speed }}</td>
+                    <td>{{ record.heart_rate }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<hr />
 
 {% block workout_detail_keywords %}
 {% keywords_for workout as tags %}
