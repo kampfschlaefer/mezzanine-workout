@@ -13,6 +13,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+import logging
 
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth import get_user_model
@@ -26,42 +27,43 @@ class Command(BaseCommand):
     args = '<fitfile> ...'
     help = u'Import FIT-files from garmin devices into workout-data'
 
+    def __init__(self, *args, **kwargs):
+        super(Command, self).__init__(*args, **kwargs)
+        self.logger = logging.getLogger(__name__+'.'+self.__class__.__name__)
+
     def handle(self, *args, **options):
-        print "Should import files from %s" % list(args)
         for f in args:
-            print "Processing '%s'..." % f
+            self.logger.info(u"Processing '%s'..." % f)
             fitfile = FitFile(
                 f,
                 data_processor=FullDatetimeProcessor(),
                 check_crc=False
             )
-            #print fitfile
             workout = Workout()
-            print "  Processing session"
+            self.logger.info(u"Processing session")
             for msg in fitfile.get_messages(name='session', as_dict=True):
-                print msg['fields']
+                self.logger.debug(u"Session fields: %s" % str(msg['fields']))
                 for f in msg['fields']:
                     if f['name'] == 'timestamp':
                         workout.title = f['value'].astimezone(get_default_timezone()).isoformat()
                     if f['name'] == 'start_time':
                         workout.publish_date = f['value']
                     if hasattr(workout, f['name']):
-                        print "   Setting '%s' to '%s'" % (f['name'], f['value'])
                         setattr(workout, f['name'], f['value'])
 
             workout.user = get_user_model().objects.all()[0]
             workout.save()
 
-            print "  Processing laps"
+            self.logger.info(u"Processing laps")
             for msg in fitfile.get_messages(name='lap', as_dict=True):
-                print msg['name']
+                self.logger.info(" Lap: '%s'" % msg['name'])
                 lap = Lap(workout=workout)
                 for f in msg['fields']:
                     if hasattr(lap, f['name']):
-                        getattr(lap, f['name'], f['value'])
+                        setattr(lap, f['name'], f['value'])
                 lap.save()
 
-            print "  Processing data points"
+            self.logger.info(u"Processing data points")
             for msg in fitfile.get_messages(name='record', as_dict=True):
                 record = Record(workout=workout)
                 for f in msg['fields']:
@@ -69,4 +71,4 @@ class Command(BaseCommand):
                         setattr(record, f['name'], f['value'])
                 record.save()
 
-            print " Finished."
+            self.logger.info("Finished.")
