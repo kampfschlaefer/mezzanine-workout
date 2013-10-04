@@ -125,7 +125,7 @@
             <tbody>
                 {% for record in workout.records.all %}
                 <tr>
-                    <td>{{ record.timestamp|date:"H:m:s" }}</td>
+                    <td>{{ record.timestamp|date:"H:i:s" }}</td>
                     <td>{{ record.distance }}</td>
                     <td>{{ record.altitude }}</td>
                     <td>{{ record.speed }}</td>
