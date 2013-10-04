@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{#{% load i18n future mezzanine_tags blog_tags keyword_tags disqus_tags %}#}
+{% load i18n future mezzanine_tags keyword_tags %}
+
+{% block meta_title %}{% if page %}{{ page.richtextpage.meta_title }}{% else %}{% trans "Workouts" %}{% endif %}{% endblock %}
+
+{% block meta_keywords %}{% metablock %}
+{% keywords_for page as keywords %}
+{% for keyword in keywords %}
+    {% if not forloop.first %}, {% endif %}
+    {{ keyword }}
+{% endfor %}
+{% endmetablock %}{% endblock %}
+
+{% block meta_description %}{% metablock %}
+{{ page.description }}
+{% endmetablock %}{% endblock %}
+
+{% block title %}
+{% if page %}
+{% editable page.title %}{{ page.title }}{% endeditable %}
+{% else %}
+{% trans "Workouts" %}
+{% endif %}
+{% endblock %}
+
+{% block main %}
+
+<form action="{% url 'workout_importfile' %}" method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+{{ form.as_p }}
+
+<input type="submit" class="btn btn-primary" value="Speichern" />
+</form>
+
+{% endblock %}
+

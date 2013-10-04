@@ -13,13 +13,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+from django import forms
 
-from django.conf.urls import patterns, url
-
-from .views import WorkoutList, WorkoutDetail, ImportFitView
-
-urlpatterns = patterns('workout.views',
-    url(r'^/$', WorkoutList.as_view(), ),
-    url(r'^/importfile/$', ImportFitView.as_view(), name='workout_importfile'),
-    url(r'^/(?P<pk>\d+)', WorkoutDetail.as_view(), name='workout_detail'),
-)
+class FitFileImportForm(forms.Form):
+    uploadfile = forms.FileField()

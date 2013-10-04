@@ -165,3 +165,11 @@
 
 {% endblock %}
 
+{% block right_panel %}
+
+<div class="panel">
+<a class="btn" href="{% url 'workout_importfile' %}">Import FIT-file</a>
+</div>
+
+{{ block.super }}
+{% endblock %}

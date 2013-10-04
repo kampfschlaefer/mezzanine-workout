@@ -16,9 +16,14 @@
 # Create your views here.
 
 from django.views.generic import ListView, DetailView
+from django.views.generic.edit import FormView
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 from mezzanine.utils.views import render, paginate
 
 from .models import Workout
+from .forms import FitFileImportForm
+from .helpers import importfitfile
 
 
 class WorkoutList(ListView):
@@ -27,3 +32,13 @@ class WorkoutList(ListView):
 
 class WorkoutDetail(DetailView):
     model = Workout
+
+
+class ImportFitView(FormView):
+    form_class = FitFileImportForm
+    success_url = '/workout/'
+    template_name = 'workout/importfile.html'
+
+    def form_valid(self, form):
+        workout = importfitfile(self.request.FILES['uploadfile'], self.request.user)
+        return HttpResponseRedirect(reverse('workout_detail', args=[workout.id]))
