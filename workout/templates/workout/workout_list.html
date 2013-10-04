@@ -167,9 +167,13 @@
 
 {% block right_panel %}
 
+{% if perms.workout %}
+
 <div class="panel">
 <a class="btn" href="{% url 'workout_importfile' %}">Import FIT-file</a>
 </div>
+
+{% endif %}
 
 {{ block.super }}
 {% endblock %}

@@ -1,1 +1,2 @@
-recursive-include workout/templates *
+include LICENSE
+include README.md
