@@ -1,1 +1,1 @@
-recursive-include workout/templates *.html
+recursive-include workout/templates *
