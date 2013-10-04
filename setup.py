@@ -24,6 +24,7 @@ setup(
     url="http://github.com/kampfschlaefer/mezzanine-workout",
     license=open('LICENSE', 'r').read(),
     packages=['workout'],
+    package_data={'workout': ['templates/workout/*']},
     install_requires=['fitparse==0.0.1-dev'],
     dependency_links=['git+https://github.com/kampfschlaefer/python-fitparse.git@ng#egg=fitparse-0.0.1-dev'],
 )
