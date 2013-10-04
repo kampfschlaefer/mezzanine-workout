@@ -48,10 +48,11 @@ def importfitfile(f, user=None):
     for msg in fitfile.get_messages(name='session', as_dict=True):
         logger.debug(u"Session fields: %s" % str(msg['fields']))
         for f in msg['fields']:
-            if f['name'] == 'timestamp':
-                workout.title = f['value'].astimezone(get_default_timezone()).isoformat()
+            #if f['name'] == 'timestamp':
+                #workout.title = f['value'].astimezone(get_default_timezone()).isoformat()
             if f['name'] == 'start_time':
                 workout.publish_date = f['value']
+                workout.title = f['value'].astimezone(get_default_timezone()).isoformat()
             if hasattr(workout, f['name']):
                 setattr(workout, f['name'], f['value'])
 

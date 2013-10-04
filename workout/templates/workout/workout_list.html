@@ -73,6 +73,7 @@
 {% endif %}
 
 {% for workout in workout_list %}
+<div class="{% if workout.status == 1 %}well well-small muted{% endif %}">
 {% editable workout.title %}
 <h2>
     <a href="{{ workout.get_absolute_url }}">{{ workout.title }}</a>
@@ -98,6 +99,7 @@
     {{ workout.description_from_content|safe }}
     {% endeditable %}
     {% endblock %}
+</div>
 </div>
 {% endfor %}
 

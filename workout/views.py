@@ -29,6 +29,9 @@ from .helpers import importfitfile
 class WorkoutList(ListView):
     model = Workout
 
+    def get_queryset(self):
+        return Workout.objects.published(for_user=self.request.user)
+
 
 class WorkoutDetail(DetailView):
     model = Workout
