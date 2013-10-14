@@ -16,10 +16,11 @@
 
 from django.conf.urls import patterns, url
 
-from .views import WorkoutList, WorkoutDetail, ImportFitView
+from .views import WorkoutList, WorkoutDetail, ImportFitView, GraphOverview
 
 urlpatterns = patterns('workout.views',
     url(r'^/$', WorkoutList.as_view(), ),
+    url(r'^/graphs/$', GraphOverview.as_view(), name='workout_graphs'),
     url(r'^/importfile/$', ImportFitView.as_view(), name='workout_importfile'),
     url(r'^/(?P<pk>\d+)', WorkoutDetail.as_view(), name='workout_detail'),
 )

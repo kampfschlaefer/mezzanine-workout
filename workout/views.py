@@ -45,3 +45,11 @@ class ImportFitView(FormView):
     def form_valid(self, form):
         workout = importfitfile(self.request.FILES['uploadfile'], self.request.user)
         return HttpResponseRedirect(reverse('workout_detail', args=[workout.id]))
+
+
+class GraphOverview(ListView):
+    #model = Workout
+    template_name = 'workout/graphoverview.html'
+
+    def get_queryset(self):
+        return Workout.objects.published(for_user=self.request.user)

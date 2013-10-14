@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{#{% load i18n future mezzanine_tags blog_tags keyword_tags disqus_tags %}#}
+{% load i18n future mezzanine_tags keyword_tags staticfiles %}
+
+{% block meta_title %}{% if page %}{{ page.richtextpage.meta_title }}{% else %}{% trans "Workouts" %}{% endif %}{% endblock %}
+
+{% block meta_keywords %}{% metablock %}
+{% keywords_for page as keywords %}
+{% for keyword in keywords %}
+    {% if not forloop.first %}, {% endif %}
+    {{ keyword }}
+{% endfor %}
+{% endmetablock %}{% endblock %}
+
+{% block meta_description %}{% metablock %}
+{{ page.description }}
+{% endmetablock %}{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script type="text/javascript" src="{% static "flot/jquery.flot.js" %}">
+</script>
+<script type="text/javascript">
+var options = {
+    yaxes: [ {}, { max: 20 } ],
+    xaxes: [ {
+        position: "bottom",
+        //mode: "time"
+    } ]
+}
+var dataheartbeat = [
+    {
+        label: "Heartbeat",
+        data: [
+            {% for workout in object_list %}
+                [ {{ workout.id }}, {{ workout.avg_heart_rate }} ]{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ]
+    },
+    {
+        label: "Max. Heartbeat",
+        data: [
+            {% for workout in object_list %}
+                [ {{ workout.id }}, {{ workout.max_heart_rate }} ]{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ]
+    }
+]
+var dataspeed = [
+    {
+        label: "Speed",
+        data: [
+            {% for workout in object_list %}
+                [ {{ workout.id }}, {{ workout.avg_speed }} ]{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ],
+    },
+    {
+        label: "Max. Speed",
+        data: [
+            {% for workout in object_list %}
+                [ {{ workout.id }}, {{ workout.max_speed }} ]{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ],
+    }
+]
+var dataduration = [
+    {
+        label: "Elapsed Time",
+        data: [
+            {% for workout in object_list %}
+                [ {{ workout.id }}, {{ workout.total_elapsed_time }} / 60 ]{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ],
+    },
+    {
+        label: "Timed Time",
+        data: [
+            {% for workout in object_list %}
+                [ {{ workout.id }}, {{ workout.total_timer_time }} / 60 ]{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ],
+    }
+]
+var datadistance = [
+    {
+        label: "Distance",
+        data: [
+            {% for workout in object_list %}
+                [ {{ workout.id }}, {{ workout.total_distance }} / 1000 ]{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ],
+    }
+]
+
+$(document).ready(function() {
+    $.plot($('#graph_heartrates'), dataheartbeat, options);
+    $.plot($('#graph_speed'), dataspeed, options);
+    $.plot($('#graph_duration'), dataduration, options);
+    $.plot($('#graph_distance'), datadistance, options);
+});
+</script>
+{% endblock %}
+
+{% block title %}
+{% if page %}
+{% editable page.title %}{{ page.title }}{% endeditable %}
+{% else %}
+{% trans "Workouts" %}
+{% endif %}
+{% endblock %}
+
+{% comment %}
+{% block breadcrumb_menu %}
+{{ block.super }}
+{% if tag or category or year or month or author %}
+<li>{% spaceless %}
+{% if tag %}
+    {% trans "Tag:" %} {{ tag }}
+{% else %}{% if category %}
+    {% trans "Category:" %} {{ category }}
+{% else %}{% if year or month %}
+    {% if month %}{{ month }}, {% endif %}{{ year }}
+{% else %}{% if author %}
+    {% trans "Author:" %} {{ author.get_full_name|default:author.username }}
+{% endif %}{% endif %}{% endif %}{% endif %}
+{% endspaceless %}
+</li>
+{% endif %}
+{% endblock %}
+{% endcomment %}
+
+{% block main %}
+
+{% if tag or category or year or month or author %}
+    {% block blog_post_list_filterinfo %}
+    <p>
+    {% if tag %}
+        {% trans "Viewing posts tagged" %} {{ tag }}
+    {% else %}{% if category %}
+        {% trans "Viewing posts for the category" %} {{ category }}
+    {% else %}{% if year or month %}
+        {% trans "Viewing posts from" %} {% if month %}{{ month }}, {% endif %}
+        {{ year }}
+    {% else %}{% if author %}
+        {% trans "Viewing posts by" %}
+        {{ author.get_full_name|default:author.username }}
+    {% endif %}{% endif %}{% endif %}{% endif %}
+    {% endblock %}
+    </p>
+{% else %}
+    {% if page %}
+    {% block blog_post_list_pagecontent %}
+    {% editable page.richtextpage.content %}
+    {{ page.richtextpage.content|richtext_filter|safe }}
+    {% endeditable %}
+    {% endblock %}
+    {% endif %}
+{% endif %}
+
+<div class="row-fluid" >
+    <div class="span6">
+        <div id="graph_heartrates" style="width: 100%; height: 300px;"></div>
+    </div>
+    <div class="span6">
+        <div id="graph_speed" style="width: 100%; height: 300px;"></div>
+    </div>
+</div>
+<div class="row-fluid" >
+    <div class="span6">
+        <div id="graph_duration" style="width: 100%; height: 300px;"></div>
+    </div>
+    <div class="span6">
+        <div id="graph_distance" style="width: 100%; height: 300px;"></div>
+    </div>
+</div>
+{% comment %}
+{% for workout in workout_list %}
+<div class="{% if workout.status == 1 %}well well-small muted{% endif %}">
+{% editable workout.title %}
+<h2>
+    <a href="{{ workout.get_absolute_url }}">{{ workout.title }}</a>
+</h2>
+{% endeditable %}
+<h6>{% trans "Activity done by" %} {{workout.user.get_full_name}} {% trans "on" %} {{ workout.publish_date }}</h6>
+<div class="workout_details" style="border-bottom: dashed lightGray 1px;">
+    {% block workout_list_workout_content %}
+    <p>
+        <b>Totals</b>:
+        <span title="Total elapsed time">{{ workout.total_elapsed_time }} sec</span> / <span title="Total timer time">{{ workout.total_timer_time }} sec</span> ·
+        <span title="Distance">{{ workout.total_distance }} m</span> ·
+        <span title="Ascent">{{ workout.total_ascent }} m</span> ·
+        <span title="Calories">{{ workout.total_calories }}</span> cal
+    <br />
+        <b>Data</b>:
+        <span title="Avg Heart Rate">{{ workout.avg_heart_rate }} bpm</span> / <span title="Max Heart Rate">{{workout.max_heart_rate}} bpm</span> ·
+        <span title="Avg Speed">{{ workout.avg_speed }} m/s</span> / <span title="Max Speed">{{ workout.max_speed }} m/s</span> ·
+        <span title="Laps">{{ workout.laps.count }} laps</span> ·
+        <span title="Data points">{{ workout.records.count }} points</span>
+    </p>
+    {% editable workout.content %}
+    {{ workout.description_from_content|safe }}
+    {% endeditable %}
+    {% endblock %}
+</div>
+</div>
+{% endfor %}
+{% endcomment %}
+
+
+{% endblock %}
+
+{% comment %}
+{% block right_panel %}
+
+{% if perms.workout %}
+
+<div class="panel">
+<a class="btn" href="{% url 'workout_importfile' %}">Import FIT-file</a>
+</div>
+
+{% endif %}
+
+{{ block.super }}
+{% endblock %}
+{% endcomment %}
