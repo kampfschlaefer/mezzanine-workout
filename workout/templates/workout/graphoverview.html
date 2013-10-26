@@ -35,7 +35,8 @@ var dataheartbeat = [
             {% for workout in object_list %}
                 [ {{ workout.id }}, {{ workout.avg_heart_rate }} ]{% if not forloop.last %},{% endif %}
             {% endfor %}
-        ]
+        ],
+        bars: { show: true }
     },
     {
         label: "Max. Heartbeat",
@@ -43,7 +44,8 @@ var dataheartbeat = [
             {% for workout in object_list %}
                 [ {{ workout.id }}, {{ workout.max_heart_rate }} ]{% if not forloop.last %},{% endif %}
             {% endfor %}
-        ]
+        ],
+        lines: { show: true }
     }
 ]
 var dataspeed = [
