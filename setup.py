@@ -17,7 +17,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="workout",
-    version="0.2.3",
+    version="0.2.4",
     description="Store and display workout-data from FIT-files in mezzanine.",
     author="Arnold Krille",
     author_email="arnold@arnoldarts.de",

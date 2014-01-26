@@ -57,7 +57,7 @@ var dataheartbeat = [
         label: "Heartbeat",
         data: [
             {% for workout in object_list %}
-                [ {{ workout.id }}, {{ workout.avg_heart_rate }} ]{% if not forloop.last %},{% endif %}
+                [ {{ workout.id }}, {{ workout.avg_heart_rate|default_if_none:"0" }} ]{% if not forloop.last %},{% endif %}
             {% endfor %}
         ],
         {#bars: { show: true }#}
@@ -66,7 +66,7 @@ var dataheartbeat = [
         label: "Max. Heartbeat",
         data: [
             {% for workout in object_list %}
-                [ {{ workout.id }}, {{ workout.max_heart_rate }} ]{% if not forloop.last %},{% endif %}
+                [ {{ workout.id }}, {{ workout.max_heart_rate|default_if_none:"0" }} ]{% if not forloop.last %},{% endif %}
             {% endfor %}
         ],
         lines: { show: true }
@@ -77,7 +77,7 @@ var dataspeed = [
         label: "Speed",
         data: [
             {% for workout in object_list %}
-                [ {{ workout.id }}, {{ workout.avg_speed }} ]{% if not forloop.last %},{% endif %}
+                [ {{ workout.id }}, {{ workout.avg_speed|default_if_none:"0" }} ]{% if not forloop.last %},{% endif %}
             {% endfor %}
         ],
     },
@@ -85,7 +85,7 @@ var dataspeed = [
         label: "Max. Speed",
         data: [
             {% for workout in object_list %}
-                [ {{ workout.id }}, {{ workout.max_speed }} ]{% if not forloop.last %},{% endif %}
+                [ {{ workout.id }}, {{ workout.max_speed|default_if_none:"0" }} ]{% if not forloop.last %},{% endif %}
             {% endfor %}
         ],
     }
@@ -95,7 +95,7 @@ var dataduration = [
         label: "Elapsed Time",
         data: [
             {% for workout in object_list %}
-                [ {{ workout.id }}, {{ workout.total_elapsed_time }} / 60 ]{% if not forloop.last %},{% endif %}
+                [ {{ workout.id }}, {{ workout.total_elapsed_time|default_if_none:"0" }} / 60 ]{% if not forloop.last %},{% endif %}
             {% endfor %}
         ],
     },
@@ -103,7 +103,7 @@ var dataduration = [
         label: "Timed Time",
         data: [
             {% for workout in object_list %}
-                [ {{ workout.id }}, {{ workout.total_timer_time }} / 60 ]{% if not forloop.last %},{% endif %}
+                [ {{ workout.id }}, {{ workout.total_timer_time|default_if_none:"0" }} / 60 ]{% if not forloop.last %},{% endif %}
             {% endfor %}
         ],
     }
@@ -113,7 +113,7 @@ var datadistance = [
         label: "Distance",
         data: [
             {% for workout in object_list %}
-                [ {{ workout.id }}, {{ workout.total_distance }} / 1000 ]{% if not forloop.last %},{% endif %}
+                [ {{ workout.id }}, {{ workout.total_distance|default_if_none:"0" }} / 1000 ]{% if not forloop.last %},{% endif %}
             {% endfor %}
         ],
     }
