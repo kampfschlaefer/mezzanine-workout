@@ -13,17 +13,18 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(
     name="workout",
-    version="0.2.2",
+    version="0.2.3",
     description="Store and display workout-data from FIT-files in mezzanine.",
     author="Arnold Krille",
     author_email="arnold@arnoldarts.de",
     url="http://github.com/kampfschlaefer/mezzanine-workout",
     license=open('LICENSE', 'r').read(),
-    packages=['workout'],
+    packages=find_packages(),
+    include_package_data=True,
     install_requires=['fitparse==0.0.1-dev'],
     dependency_links=['git+https://github.com/kampfschlaefer/python-fitparse.git@ng#egg=fitparse-0.0.1-dev'],
 )
