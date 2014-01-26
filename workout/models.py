@@ -14,7 +14,24 @@
 #   limitations under the License.
 
 from django.db import models
-from mezzanine.core.models import Displayable, Ownable, RichText
+from django.utils.translation import ugettext_lazy as _
+from mezzanine.core.models import Displayable, Ownable, RichText, Slugged
+
+
+class WorkoutCategory(Slugged):
+    """
+    A category for workouts. Heavily inspired by the categories in
+    mezzanine.blog.
+    """
+
+    class Meta:
+        verbose_name = _('Workout Category')
+        verbose_name_plural = _('Workout Categories')
+        ordering = ('title',)
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('workout_list', (), {'category': self.slug})
 
 
 # Create your models here.
@@ -54,15 +71,18 @@ class AbstractLap(models.Model):
     end_position_lat = models.FloatField(null=True, blank=True)
     end_position_long = models.FloatField(null=True, blank=True)
 
-
     class Meta:
         abstract = True
 
 
 class Workout(AbstractLap, Displayable, Ownable, RichText):
+    categories = models.ManyToManyField('WorkoutCategory',
+                                        verbose_name=_('Workout Categories'),
+                                        blank=True, related_name='workouts')
+
     @models.permalink
     def get_absolute_url(self):
-        return ('workout_detail', (), {'pk': self.id}) #{'timestamp': self.publish_date.isoformat()})
+        return ('workout_detail', (), {'pk': self.id})
 
     class Meta:
         ordering = ['-publish_date']
