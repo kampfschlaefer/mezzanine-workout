@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "workout/workout_list.html" %}
 {#{% load i18n future mezzanine_tags blog_tags keyword_tags disqus_tags %}#}
 {% load i18n future mezzanine_tags keyword_tags staticfiles %}
 
@@ -38,35 +38,34 @@
 {{ block.super }}
 <script type="text/javascript" src="{% static "flot/jquery.flot.js" %}">
 </script>
+<script type="text/javascript" src="{% static "flot/jquery.flot.time.js" %}">
+</script>
 <script type="text/javascript">
+var xaxes = [ {
+        position: "bottom",
+        mode: "time",
+        labelHeight: 75,
+    } ]
 var options = {
     yaxes: [ {}, { max: 20 } ],
-    xaxes: [ {
-        position: "bottom",
-        //mode: "time",
-        ticks: [
-            {% for workout in object_list %}
-                [ {{ workout.id }}, "{{ workout.publish_date|date:"Y-m-d" }}<br />{{ workout.publish_date|date:"H:i" }}" ]{% if not forloop.last %},{% endif %}
-            {% endfor %}
-        ],
-        labelHeight: 75,
-    } ],
+    xaxes: xaxes
 }
 var dataheartbeat = [
     {
-        label: "Heartbeat",
+        label: "Avg. Heartbeat",
         data: [
             {% for workout in object_list %}
-                [ {{ workout.id }}, {{ workout.avg_heart_rate|default_if_none:"0" }} ]{% if not forloop.last %},{% endif %}
+                [ {{ workout.publish_date|date:"U" }}*1000, {{ workout.avg_heart_rate|default_if_none:"0" }} ]{% if not forloop.last %},{% endif %}
             {% endfor %}
         ],
-        {#bars: { show: true }#}
+        lines: { show: true },
+        points: { show: true }
     },
     {
         label: "Max. Heartbeat",
         data: [
             {% for workout in object_list %}
-                [ {{ workout.id }}, {{ workout.max_heart_rate|default_if_none:"0" }} ]{% if not forloop.last %},{% endif %}
+                [ {{ workout.publish_date|date:"U" }}*1000, {{ workout.max_heart_rate|default_if_none:"0" }} ]{% if not forloop.last %},{% endif %}
             {% endfor %}
         ],
         lines: { show: true }
@@ -77,7 +76,7 @@ var dataspeed = [
         label: "Speed",
         data: [
             {% for workout in object_list %}
-                [ {{ workout.id }}, {{ workout.avg_speed|default_if_none:"0" }} ]{% if not forloop.last %},{% endif %}
+                [ {{ workout.publish_date|date:"U" }}*1000, {{ workout.avg_speed|default_if_none:"0" }}*1000/360 ]{% if not forloop.last %},{% endif %}
             {% endfor %}
         ],
     },
@@ -85,7 +84,7 @@ var dataspeed = [
         label: "Max. Speed",
         data: [
             {% for workout in object_list %}
-                [ {{ workout.id }}, {{ workout.max_speed|default_if_none:"0" }} ]{% if not forloop.last %},{% endif %}
+                [ {{ workout.publish_date|date:"U" }}*1000, {{ workout.max_speed|default_if_none:"0" }}*1000/360 ]{% if not forloop.last %},{% endif %}
             {% endfor %}
         ],
     }
@@ -95,7 +94,7 @@ var dataduration = [
         label: "Elapsed Time",
         data: [
             {% for workout in object_list %}
-                [ {{ workout.id }}, {{ workout.total_elapsed_time|default_if_none:"0" }} / 60 ]{% if not forloop.last %},{% endif %}
+                [ {{ workout.publish_date|date:"U" }}*1000, {{ workout.total_elapsed_time|default_if_none:"0" }} / 60 ]{% if not forloop.last %},{% endif %}
             {% endfor %}
         ],
     },
@@ -103,7 +102,7 @@ var dataduration = [
         label: "Timed Time",
         data: [
             {% for workout in object_list %}
-                [ {{ workout.id }}, {{ workout.total_timer_time|default_if_none:"0" }} / 60 ]{% if not forloop.last %},{% endif %}
+                [ {{ workout.publish_date|date:"U" }}*1000, {{ workout.total_timer_time|default_if_none:"0" }} / 60 ]{% if not forloop.last %},{% endif %}
             {% endfor %}
         ],
     }
@@ -113,7 +112,7 @@ var datadistance = [
         label: "Distance",
         data: [
             {% for workout in object_list %}
-                [ {{ workout.id }}, {{ workout.total_distance|default_if_none:"0" }} / 1000 ]{% if not forloop.last %},{% endif %}
+                [ {{ workout.publish_date|date:"U" }}*1000, {{ workout.total_distance|default_if_none:"0" }} / 1000 ]{% if not forloop.last %},{% endif %}
             {% endfor %}
         ],
     }
@@ -121,8 +120,8 @@ var datadistance = [
 
 $(document).ready(function() {
     $.plot($('#graph_heartrates'), dataheartbeat, options);
-    $.plot($('#graph_speed'), dataspeed, options);
-    $.plot($('#graph_duration'), dataduration, options);
+    $.plot($('#graph_speed'), dataspeed, {yaxes: [{ max: 15,  }], xaxes: xaxes});
+    $.plot($('#graph_duration'), dataduration, {xaxes: xaxes, yaxes: [{ max: 60 }]});
     $.plot($('#graph_distance'), datadistance, options);
 });
 </script>

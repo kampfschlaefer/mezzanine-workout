@@ -52,4 +52,4 @@ class GraphOverview(ListView):
     template_name = 'workout/graphoverview.html'
 
     def get_queryset(self):
-        return Workout.objects.published(for_user=self.request.user)
+        return Workout.objects.published(for_user=self.request.user).order_by('publish_date')
