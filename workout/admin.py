@@ -40,6 +40,29 @@ list_filter = deepcopy(DisplayableAdmin.list_filter) + ('categories',)
 class WorkoutAdmin(DisplayableAdmin, OwnableAdmin):
     fieldsets = fieldsets
     list_filter = list_filter
+    list_display = ['publish_date', 'title', 'user', 'distance', 'total_time', 'speed', 'heartrate', 'status', 'admin_link']
+
+    def distance(self, instance):
+        if instance.total_distance is not None:
+            return '%.1f km' % (instance.total_distance/1000.)
+        return ''
+
+    def total_time(self, instance):
+        if instance.total_timer_time is not None:
+            seconds = instance.total_timer_time
+            minutes = seconds // 60
+            hours = minutes // 60
+            return "%i:%02i:%02i" % (hours, minutes%60, seconds%60)
+
+    def speed(self, instance):
+        if instance.avg_speed is not None:
+            return '%.1f km/h' % (instance.avg_speed*1000/360)
+        return ''
+
+    def heartrate(self, instance):
+        if instance.avg_heart_rate is not None:
+            return '%i bpm' % instance.avg_heart_rate
+        return ''
 
 
 class WorkoutCategoryAdmin(admin.ModelAdmin):
