@@ -74,11 +74,11 @@
 
 {% for workout in workout_list %}
 <div class="{% if workout.status == 1 %}well well-small muted{% endif %}">
-{% editable workout.title %}
+{#{% editable workout.title %}#}
 <h2>
     <a href="{{ workout.get_absolute_url }}">{{ workout.title }}</a>
 </h2>
-{% endeditable %}
+{#{% endeditable %}#}
 <h6>{% trans "Activity done by" %} {{workout.user.get_full_name}} {% trans "on" %} {{ workout.publish_date }}</h6>
 <div class="workout_details" style="border-bottom: dashed lightGray 1px;">
     {% block workout_list_workout_content %}
@@ -95,9 +95,9 @@
         <span title="Laps">{{ workout.laps.count }} laps</span> ·
         <span title="Data points">{{ workout.records.count }} points</span>
     </p>
-    {% editable workout.content %}
+    {#{% editable workout.content %}#}
     {{ workout.description_from_content|safe }}
-    {% endeditable %}
+    {#{% endeditable %}#}
     {% endblock %}
 </div>
 </div>
