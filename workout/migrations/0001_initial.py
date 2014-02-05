@@ -25,7 +25,7 @@ class Migration(SchemaMigration):
             ('in_sitemap', self.gf('django.db.models.fields.BooleanField')(default=True)),
             ('content', self.gf('mezzanine.core.fields.RichTextField')()),
             ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='workouts', to=orm['auth.User'])),
-            ('keywords', self.gf('mezzanine.generic.fields.KeywordsField')(object_id_field='object_pk', to=orm['generic.AssignedKeyword'], frozen_by_south=True)),
+            #('keywords', self.gf('mezzanine.generic.fields.KeywordsField')(object_id_field='object_pk', to=orm['generic.AssignedKeyword'], frozen_by_south=True)),
         ))
         db.send_create_signal(u'workout', ['Workout'])
 
@@ -102,7 +102,7 @@ class Migration(SchemaMigration):
             'gen_description': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'in_sitemap': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'keywords': ('mezzanine.generic.fields.KeywordsField', [], {'object_id_field': "'object_pk'", 'to': u"orm['generic.AssignedKeyword']", 'frozen_by_south': 'True'}),
+            #'keywords': ('mezzanine.generic.fields.KeywordsField', [], {'object_id_field': "'object_pk'", 'to': u"orm['generic.AssignedKeyword']", 'frozen_by_south': 'True'}),
             'keywords_string': ('django.db.models.fields.CharField', [], {'max_length': '500', 'blank': 'True'}),
             'publish_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'short_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),

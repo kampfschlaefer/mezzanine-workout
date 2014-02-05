@@ -25,6 +25,6 @@ setup(
     license=open('LICENSE', 'r').read(),
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['fitparse==0.0.1-dev'],
+    install_requires=['fitparse==0.0.1-dev', 'mezzanine>=3.0,<3.1'],
     dependency_links=['git+https://github.com/kampfschlaefer/python-fitparse.git@ng#egg=fitparse-0.0.1-dev'],
 )
