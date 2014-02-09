@@ -13,8 +13,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# Create your views here.
-
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
 from django.core.urlresolvers import reverse
