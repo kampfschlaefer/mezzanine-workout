@@ -78,6 +78,7 @@ class WorkoutAdmin(DisplayableAdmin, OwnableAdmin):
                 '&wid='.join([ '%i' % w.id for w in queryset ])
             )
         )
+    masscategories.short_description = 'Apply category to selected workouts'
 
 
 class WorkoutCategoryAdmin(admin.ModelAdmin):
