@@ -14,6 +14,13 @@
 #   limitations under the License.
 
 from django import forms
+from .models import WorkoutCategory
 
 class FitFileImportForm(forms.Form):
     uploadfile = forms.FileField()
+
+
+class AdminMassCategoriesForm(forms.Form):
+    category = forms.ModelChoiceField(queryset=WorkoutCategory.objects.all())
+    #workouts = forms.ModelMultipleChoiceField(widget=forms.MultipleHiddenInput())
+    workouts = forms.CharField(max_length=200, widget=forms.HiddenInput)

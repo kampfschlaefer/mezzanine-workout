@@ -22,7 +22,7 @@ from django.http import HttpResponseRedirect
 from mezzanine.utils.views import render, paginate
 
 from .models import Workout
-from .forms import FitFileImportForm
+from .forms import FitFileImportForm, AdminMassCategoriesForm
 from .helpers import importfitfile
 
 
@@ -48,8 +48,27 @@ class ImportFitView(FormView):
 
 
 class GraphOverview(ListView):
-    #model = Workout
     template_name = 'workout/graphoverview.html'
 
     def get_queryset(self):
         return Workout.objects.published(for_user=self.request.user).order_by('publish_date')
+
+
+class AdminMassCategory(FormView):
+    form_class = AdminMassCategoriesForm
+    template_name = 'workout/admin_mass_categories.html'
+
+    def get_initial(self):
+        print "get_initial!"
+        return {
+            'workouts': ','.join(
+                [ s for s in self.request.GET.getlist('wid')]
+            )
+         }
+
+    def form_valid(self, form):
+        print "form_valid!"
+        for wid in form.cleaned_data['workouts'].split(','):
+            w = Workout.objects.get(pk=wid)
+            w.categories.add(form.cleaned_data['category'])
+        return HttpResponseRedirect(reverse('admin:workout_workout_changelist'))

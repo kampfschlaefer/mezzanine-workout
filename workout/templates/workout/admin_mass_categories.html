@@ -1,0 +1,25 @@
+{% extends "admin/base_site.html" %}
+
+{% block bodyclass %}change-form{% endblock %}
+
+{% block content %}
+<h1>Apply category to workouts</h1>
+
+<div id="content-main">
+
+<form method="POST" action="">
+
+    {% csrf_token %}
+
+    {{ form }}
+
+    <div class="submit-row">
+    <input type="submit" value="Save" class="default" name="_save" />
+    <p class="deletelink-box">
+    <a class="cancellink" href="{% url "admin:workout_workout_changelist" %}">Abort</a>
+    </p>
+    </div>
+</form>
+
+</div>
+{% endblock %}

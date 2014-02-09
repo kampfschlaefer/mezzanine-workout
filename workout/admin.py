@@ -15,6 +15,8 @@
 
 from copy import deepcopy
 
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from django.contrib import admin
 from mezzanine.core.admin import DisplayableAdmin, OwnableAdmin
 from mezzanine.conf import settings
@@ -40,7 +42,9 @@ list_filter = deepcopy(DisplayableAdmin.list_filter) + ('categories',)
 class WorkoutAdmin(DisplayableAdmin, OwnableAdmin):
     fieldsets = fieldsets
     list_filter = list_filter
-    list_display = ['publish_date', 'title', 'user', 'distance', 'total_time', 'speed', 'heartrate', 'status', 'admin_link']
+    list_display = ['publish_date', 'title', 'user', 'distance', 'total_time', 'speed', 'heartrate', 'categorylist', 'status', 'admin_link']
+    list_per_page = 25
+    actions = ['masscategories']
 
     def distance(self, instance):
         if instance.total_distance is not None:
@@ -63,6 +67,17 @@ class WorkoutAdmin(DisplayableAdmin, OwnableAdmin):
         if instance.avg_heart_rate is not None:
             return '%i bpm' % instance.avg_heart_rate
         return ''
+
+    def categorylist(self, instance):
+        return u', '.join([ cat.title for cat in instance.categories.all() ])
+
+    def masscategories(self, request, queryset):
+        return HttpResponseRedirect(
+            "%s?wid=%s" % (
+                reverse('workout_admin_masscategories'),
+                '&wid='.join([ '%i' % w.id for w in queryset ])
+            )
+        )
 
 
 class WorkoutCategoryAdmin(admin.ModelAdmin):

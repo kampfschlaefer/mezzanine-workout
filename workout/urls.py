@@ -16,11 +16,17 @@
 
 from django.conf.urls import patterns, url
 
-from .views import WorkoutList, WorkoutDetail, ImportFitView, GraphOverview
+from .views import (
+    WorkoutList, WorkoutDetail,
+    ImportFitView,
+    GraphOverview,
+    AdminMassCategory
+)
 
 urlpatterns = patterns('workout.views',
-    url(r'^/$', WorkoutList.as_view(), ),
+    url(r'^/$', WorkoutList.as_view(), name='workout_list'),
     url(r'^/graphs/$', GraphOverview.as_view(), name='workout_graphs'),
     url(r'^/importfile/$', ImportFitView.as_view(), name='workout_importfile'),
     url(r'^/(?P<pk>\d+)', WorkoutDetail.as_view(), name='workout_detail'),
+    url(r'^/masscategories/$', AdminMassCategory.as_view(), name='workout_admin_masscategories'),
 )
