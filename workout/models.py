@@ -94,3 +94,6 @@ class Lap(AbstractLap):
 
 class Record(AbstractRecord):
     workout = models.ForeignKey(Workout, related_name='records')
+
+    class Meta:
+        ordering = ['timestamp']
